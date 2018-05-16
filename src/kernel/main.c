@@ -58,8 +58,15 @@ void _start() __attribute__ ((weak, alias("module_start")));
 int module_start(SceSize args, void *argp)
 {
     mapInit();
-    hooks[n_hooks++] = taiHookFunctionExportForKernel(KERNEL_PID, &ksceKernelStartPreloadedModulesRef, "SceKernelModulemgr", 0xC445FA63, 0x432DCC7A, ksceKernelStartPreloadedModulesPatched);
-    hooks[n_hooks++] = taiHookFunctionImportForKernel(KERNEL_PID, &ksceModulemgrUnloadProcessRef, "SceProcessmgr", 0xC445FA63, 0x0E33258E, ksceModulemgrUnloadProcessPatched);
+
+    hooks[n_hooks] = taiHookFunctionExportForKernel(KERNEL_PID, &ksceKernelStartPreloadedModulesRef, "SceKernelModulemgr", 0xC445FA63, 0x432DCC7A, ksceKernelStartPreloadedModulesPatched);
+    if(hooks[n_hooks] < 0) hooks[n_hooks] = taiHookFunctionExportForKernel(KERNEL_PID, &ksceKernelStartPreloadedModulesRef, "SceKernelModulemgr", 0x92C9FFC2, 0x998C7AE9, ksceKernelStartPreloadedModulesPatched);
+    n_hooks++;
+
+    hooks[n_hooks] = taiHookFunctionImportForKernel(KERNEL_PID, &ksceModulemgrUnloadProcessRef, "SceProcessmgr", 0xC445FA63, 0x0E33258E, ksceModulemgrUnloadProcessPatched);
+    if(hooks[n_hooks] < 0) hooks[n_hooks] = taiHookFunctionImportForKernel(KERNEL_PID, &ksceModulemgrUnloadProcessRef, "SceProcessmgr", 0x92C9FFC2, 0xE71530D7, ksceModulemgrUnloadProcessPatched);
+    n_hooks++;
+
     return SCE_KERNEL_START_SUCCESS;
 }
 
